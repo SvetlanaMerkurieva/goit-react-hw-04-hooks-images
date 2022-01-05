@@ -1,4 +1,4 @@
-import { Component } from 'react';
+import { useState, useEffect } from 'react';
 import { Searchbar } from '../Searchbar/Searchbar';
 import { fetchImages } from '../../services/pixabayApi';
 import { ImageGallery } from '../ImageGallery/ImageGallery';
@@ -7,7 +7,64 @@ import { LoaderHere } from '../Loader/Loader';
 import { Modal } from '../Modal/Modal';
 import s from './App.module.css';
 
-class App extends Component {
+export default function App() {
+  const [imgName, setImgName] = useState('');
+  const [images, setImages] = useState([]);
+  const [largeImage, setLargeImage] = useState('');
+  const [page, setPage] = useState(1);
+  const [loading, setLoading] = useState(false);
+  const [visible, setVisible] = useState(false);
+  const [showModal, setShowModal] = useState(false);
+
+  const handleFormSubmit = imgName => {
+    setImgName(imgName);
+    setPage(1);
+  };
+
+  useEffect(() => {
+    if (imgName === '') {
+      return;
+    }
+    try {
+      const images = fetchImages(imgName, page);
+
+      if (images) {
+        return (
+          setImages(prevState => prevState.concat(images)) && setVisible(true)
+        );
+      }
+    } catch (e) {
+      return new Error(`Нет изображений по запросу ${imgName}`);
+    } finally {
+      setLoading(false);
+    }
+  }, [imgName, page]);
+
+  const onButtonClick = () => {
+    setPage(prevState => prevState + 1);
+  };
+
+  const onOpenModal = imageId => {
+    const currentImage = images.find(image => image.id === imageId);
+    return setLargeImage(currentImage.largeImageURL) && setShowModal(true);
+  };
+
+  const onCloseModal = () => {
+    return setShowModal(true);
+  };
+
+  return (
+    <div className={s.app}>
+      <Searchbar onSubmit={handleFormSubmit} />
+      {images && <ImageGallery images={images} onOpenModal={onOpenModal} />}
+      {visible && <Button onClick={onButtonClick} />}
+      {loading && <LoaderHere />}
+      {showModal && <Modal imageLarge={largeImage} onClose={onCloseModal} />}
+    </div>
+  );
+}
+
+/*class App extends Component {
   state = {
     imgName: '',
     images: [],
@@ -97,4 +154,4 @@ class App extends Component {
   }
 }
 
-export default App;
+export default App;*/
