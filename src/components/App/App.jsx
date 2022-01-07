@@ -17,27 +17,25 @@ export default function App() {
   const [showModal, setShowModal] = useState(false);
 
   const handleFormSubmit = imgName => {
-    setImgName(imgName);
-    setPage(1);
+    return setImgName(imgName) && setPage(1);
   };
 
   useEffect(() => {
     if (imgName === '') {
       return;
     }
-    try {
-      const images = fetchImages(imgName, page);
+    setLoading(true);
+    setVisible(false);
 
-      if (images) {
-        return (
-          setImages(prevState => prevState.concat(images)) && setVisible(true)
-        );
-      }
-    } catch (e) {
-      return new Error(`Нет изображений по запросу ${imgName}`);
-    } finally {
-      setLoading(false);
-    }
+    fetchImages(imgName, page)
+      .then(images => {
+        setImages(prevState => prevState.concat(images));
+        setVisible(true);
+      })
+      .catch(e => {
+        return new Error(`Нет изображений по запросу ${imgName}`);
+      })
+      .finally(() => setLoading(false));
   }, [imgName, page]);
 
   const onButtonClick = () => {
@@ -46,11 +44,12 @@ export default function App() {
 
   const onOpenModal = imageId => {
     const currentImage = images.find(image => image.id === imageId);
-    return setLargeImage(currentImage.largeImageURL) && setShowModal(true);
+    setLargeImage(currentImage.largeImageURL);
+    setShowModal(true);
   };
 
   const onCloseModal = () => {
-    return setShowModal(true);
+    setShowModal(false);
   };
 
   return (
