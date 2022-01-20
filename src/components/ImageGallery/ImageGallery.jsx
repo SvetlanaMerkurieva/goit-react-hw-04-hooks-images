@@ -5,7 +5,9 @@ export const ImageGallery = ({ images, onOpenModal }) => {
   return (
     <div className={s.content}>
       <ul className={s.imageGallery}>
-        <ImageGalleryItem images={images} onOpenModal={onOpenModal} />
+        {images.map(image => (
+          <ImageGalleryItem image={image} onOpenModal={onOpenModal} />
+        ))}
       </ul>
     </div>
   );

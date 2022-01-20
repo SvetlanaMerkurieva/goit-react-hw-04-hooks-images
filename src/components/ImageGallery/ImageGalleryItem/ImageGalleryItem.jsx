@@ -1,18 +1,14 @@
 import s from '../ImageGalleryItem/ImageGalleryItem.module.css';
 import shortid from 'shortid';
 
-export const ImageGalleryItem = ({ images, onOpenModal }) => {
+export const ImageGalleryItem = ({ image, onOpenModal }) => {
   return (
-    <>
-      {images.map(image => (
-        <li
-          className={s.imageGalleryItem}
-          key={shortid()}
-          onClick={() => onOpenModal(image.id)}
-        >
-          <img src={image.webformatURL} alt="" />
-        </li>
-      ))}
-    </>
+    <li
+      className={s.imageGalleryItem}
+      key={shortid()}
+      onClick={() => onOpenModal(image.id)}
+    >
+      <img src={image.webformatURL} alt="" />
+    </li>
   );
 };
