@@ -1,4 +1,5 @@
 import { ImageGalleryItem } from '../ImageGallery/ImageGalleryItem/ImageGalleryItem';
+import shortid from 'shortid';
 import s from '../ImageGallery/ImageGallery.module.css';
 
 export const ImageGallery = ({ images, onOpenModal }) => {
@@ -6,7 +7,11 @@ export const ImageGallery = ({ images, onOpenModal }) => {
     <div className={s.content}>
       <ul className={s.imageGallery}>
         {images.map(image => (
-          <ImageGalleryItem image={image} onOpenModal={onOpenModal} />
+          <ImageGalleryItem
+            key={shortid()}
+            image={image}
+            onOpenModal={onOpenModal}
+          />
         ))}
       </ul>
     </div>
